@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kapils.myexpensemanager.Add_Fragment_Expense">
+
+
+    <EditText
+        android:id="@+id/exptitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="33dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Title" />
+
+    <EditText
+        android:id="@+id/expdesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/exptitle"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Description" />
+
+    <EditText
+        android:id="@+id/expamount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/expdesc"
+        android:layout_alignStart="@+id/expdesc"
+        android:layout_below="@+id/expdesc"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:text="Amount" />
+
+    <Button
+        android:id="@+id/expadd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Expense"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="71dp" />
+
+    <Spinner
+        android:id="@+id/addcatspinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/expamount"
+        android:layout_alignLeft="@+id/expamount"
+        android:layout_alignRight="@+id/expamount"
+        android:layout_alignStart="@+id/expamount"
+        android:layout_below="@+id/expamount"
+        android:layout_marginTop="15dp" />
+
+    <Button
+        android:id="@+id/expchgdate"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addcatspinner"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="dd-mm-yyyy" />
+
+</RelativeLayout>

@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_summary) {
             fragment = new Summary_fragment();
         } else if (id == R.id.nav_recurring) {
-            fragment = new Manage_Fragment();
+            fragment = new Reccuring_Fragment();
 
         } else if (id == R.id.nav_manage) {
             fragment = new Manage_Fragment();

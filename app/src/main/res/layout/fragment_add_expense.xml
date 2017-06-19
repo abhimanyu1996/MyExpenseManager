@@ -14,7 +14,7 @@
         android:layout_marginTop="33dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Title" />
+        android:hint="Title" />
 
     <EditText
         android:id="@+id/expdesc"
@@ -24,7 +24,7 @@
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Description" />
+        android:hint="Description" />
 
     <EditText
         android:id="@+id/expamount"
@@ -35,7 +35,7 @@
         android:layout_below="@+id/expdesc"
         android:ems="10"
         android:inputType="numberDecimal"
-        android:text="Amount" />
+        android:hint="Amount" />
 
     <Button
         android:id="@+id/expadd"
@@ -65,6 +65,7 @@
         android:layout_below="@+id/addcatspinner"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:elevation="0dp"
         android:text="dd-mm-yyyy" />
 
 </RelativeLayout>

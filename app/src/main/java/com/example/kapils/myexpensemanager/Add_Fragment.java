@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 public class Add_Fragment extends Fragment {
 
     ViewPager pager;
-    ViewPagerAdapter adapter;
+    AddViewPagerAdapter adapter;
     SlidingTabLayout tabs;
     CharSequence Titles[]={"Add Income","Add Expense"};
     int Numboftabs =2;
@@ -25,7 +25,7 @@ public class Add_Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add, container, false);
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(getChildFragmentManager(),Titles,Numboftabs);
+        adapter =  new AddViewPagerAdapter(getChildFragmentManager(),Titles,Numboftabs);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) view.findViewById(R.id.addpager);

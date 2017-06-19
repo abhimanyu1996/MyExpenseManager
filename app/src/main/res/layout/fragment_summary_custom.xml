@@ -1,0 +1,88 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kapils.myexpensemanager.Summary_Custom_Fragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To" />
+
+            <Button
+                android:id="@+id/sumfrombutton"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DD-MM-YYYY"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="From" />
+
+            <Button
+                android:id="@+id/sumtobtn"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DD-MM-YYYY"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/sumsearchbtn"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textColor="@android:color/white" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/sumcustotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <ListView
+        android:id="@+id/sumcustomlv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+         />
+
+
+</LinearLayout>

@@ -19,7 +19,7 @@ public class MyDBHandler extends SQLiteOpenHelper{
     public final String COLUMN_TYPE ="type";
     public final String COLUMN_CATEGORY ="category";
     public final String COLUMN_AMOUNT ="amount";
-    public final String COLUMN_DATE ="date";
+    public final String COLUMN_DATE ="tdate";
 
     public final String TABLE_CATEGORY ="category";
     public final String COLUMN_CAT_NAME ="catname";
@@ -40,7 +40,7 @@ public class MyDBHandler extends SQLiteOpenHelper{
                 + COLUMN_TYPE + " TEXT, "
                 + COLUMN_CATEGORY + " TEXT, "
                 + COLUMN_AMOUNT + " REAL, "
-                + COLUMN_DATE + " TEXT"
+                + COLUMN_DATE + " DATE"
                 +"); "
 
                 ;
@@ -73,7 +73,7 @@ public class MyDBHandler extends SQLiteOpenHelper{
 
 
     public boolean addExpense(String title, String desc, String type, float amount, String cat, String date){
-        boolean b = false;
+        boolean b;
 
         try {
             SQLiteDatabase db = getWritableDatabase();
@@ -102,6 +102,52 @@ public class MyDBHandler extends SQLiteOpenHelper{
         SQLiteDatabase db = getReadableDatabase();
 
         return db.rawQuery(query, null);
+    }
+
+    public Cursor getQueryExpense(String s){
+        String query = "SELECT * FROM "+TABLE_TRANSACTION+" "+s+" order by (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) desc";
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        return db.rawQuery(query, null);
+    }
+
+    public boolean updateExpense(int searchid,String title, String desc, String type, float amount, String cat, String date){
+        boolean b;
+
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_TITLE, title);
+            values.put(COLUMN_DESC, desc);
+            values.put(COLUMN_TYPE, type);
+            values.put(COLUMN_AMOUNT, amount);
+            values.put(COLUMN_CATEGORY, cat);
+            values.put(COLUMN_DATE, date);
+
+            db.update(TABLE_TRANSACTION,values,COLUMN_ID+"="+searchid,null);
+            db.close();
+            b=true;
+        }catch (Exception e) {
+            b = false;
+        }
+
+        return b;
+    }
+
+    public boolean deleteExpense(int itemid){
+        boolean check = false;
+
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            db.delete(TABLE_TRANSACTION, COLUMN_ID + "=" + itemid, null);
+            check = true;
+        }catch (Exception e){
+            check = false;
+        }
+
+        return check;
     }
 
     public Cursor getAllCategories(){

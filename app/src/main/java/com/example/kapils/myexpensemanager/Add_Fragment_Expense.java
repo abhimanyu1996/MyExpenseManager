@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -40,8 +41,7 @@ public class Add_Fragment_Expense extends Fragment {
     private static int year;
     private static int month;
     private static int day;
-
-    static final int DATE_DIALOG_ID = 999;
+    private static SimpleDateFormat sdformat = new SimpleDateFormat("dd-MM-yyyy");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,12 +57,13 @@ public class Add_Fragment_Expense extends Fragment {
 
         //initiate date variables
         final Calendar c = Calendar.getInstance();
+        Date date=c.getTime();
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
 
         //set initial now value of date
-        expdatebtn.setText(""+day+"-"+month+"-"+year+" ");
+        expdatebtn.setText(sdformat.format(date));
 
         //date button listener
         expdatebtn.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +94,7 @@ public class Add_Fragment_Expense extends Fragment {
         addcatspinner.setAdapter(SpinnerAdapter);
         addcatspinner.setSelection(0,true);
 
-        //button click listener
+        //add button click listener
         add.setOnClickListener(
 
             new View.OnClickListener() {
@@ -105,16 +106,32 @@ public class Add_Fragment_Expense extends Fragment {
                     String mamount = amount.getText().toString();
                     String mcat = ((Cursor)addcatspinner.getSelectedItem()).getString(1);
                     String mdate = expdatebtn.getText().toString();
-                    float famt = Float.parseFloat(mamount);
 
-                    boolean check = dbHandler.addExpense(mtitle,mdesc, "Expense", famt,mcat,mdate);
-
-                    //check if data added ??
-                    if(check){
-                        Toast.makeText(getContext(),"Data Added",Toast.LENGTH_LONG).show();
+                    if(mtitle.isEmpty()){
+                        Toast.makeText(getContext(),"Please Enter Title",Toast.LENGTH_LONG).show();
+                    }
+                    else if(mamount.isEmpty()){
+                        Toast.makeText(getContext(),"Please Enter Amount",Toast.LENGTH_LONG).show();
+                    }
+                    else if(mcat.isEmpty()){
+                        Toast.makeText(getContext(),"Please Enter Title",Toast.LENGTH_LONG).show();
+                    }
+                    else if(mdate.isEmpty()){
+                        Toast.makeText(getContext(),"Please Enter Title",Toast.LENGTH_LONG).show();
                     }
                     else{
-                        Toast.makeText(getContext(),"Error occured data not added",Toast.LENGTH_LONG).show();
+                        float famt = Float.parseFloat(mamount);
+
+
+                        boolean check = dbHandler.addExpense(mtitle,mdesc, "Expense", famt,mcat,mdate);
+
+                        //check if data added ??
+                        if(check){
+                            Toast.makeText(getContext(),"Data Added",Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                            Toast.makeText(getContext(),"Error occured data not added",Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
             }
@@ -142,7 +159,10 @@ public class Add_Fragment_Expense extends Fragment {
             month = smonth;
             day = sdayOfMonth;
 
-            expdatebtn.setText(""+day+"-"+month+"-"+year+" ");
+            Calendar cal = Calendar.getInstance();
+            cal.set(syear,smonth,sdayOfMonth);
+            Date date=cal.getTime();
+            expdatebtn.setText(sdformat.format(date));
         }
     }
 

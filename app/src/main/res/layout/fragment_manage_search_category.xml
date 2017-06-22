@@ -2,40 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kapils.myexpensemanager.Summary_Custom_Fragment"
+    tools:context="com.example.kapils.myexpensemanager.Manage_Search_Category"
     android:orientation="vertical">
-
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:id="@+id/sumtyperadiogroup"
-        >
-
-        <RadioButton
-            android:id="@+id/expenseradiobtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Expense" />
-
-        <RadioButton
-            android:id="@+id/incomeradiobtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Income" />
-
-        <RadioButton
-            android:id="@+id/allradiobtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="All" />
-    </RadioGroup>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,7 +24,7 @@
                 android:text="To" />
 
             <Button
-                android:id="@+id/sumfrombutton"
+                android:id="@+id/managefrombutton"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -80,7 +48,7 @@
                 android:text="From" />
 
             <Button
-                android:id="@+id/sumtobtn"
+                android:id="@+id/managetobtn"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -91,7 +59,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/sumsearchbtn"
+            android:id="@+id/managesearchbtn"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -104,17 +72,16 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/sumcustotal"
+        android:id="@+id/managecustotal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <ListView
-        android:id="@+id/sumcustomlv"
+        android:id="@+id/managecustomlv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-         />
-
+        />
 
 </LinearLayout>

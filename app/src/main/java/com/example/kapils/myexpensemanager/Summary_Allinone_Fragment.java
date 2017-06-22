@@ -48,16 +48,24 @@ public class Summary_Allinone_Fragment extends Fragment {
 
         //loop to get total and set value of total tv
         double sumtotal=0;
+        boolean exporinc;
+
         if(querycur.moveToFirst()) {
             do {
-                sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
+
+                if(exporinc)
+                    sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                else
+                    sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+
             } while (querycur.moveToNext());
         }
         totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
 
 
         //initialize cursor adapter
-        adapter= new SimpleCursorAdapter(getContext(),
+        adapter= new CustomSimpleCursorAdapter(getContext(),
                 R.layout.listview_item_layout,
                 querycur,
                 new String[]{dbHandler.COLUMN_TITLE, ""+dbHandler.COLUMN_AMOUNT,dbHandler.COLUMN_DATE, dbHandler.COLUMN_CATEGORY},
@@ -100,11 +108,21 @@ public class Summary_Allinone_Fragment extends Fragment {
 
                 //loop to get total and set value of total tv
                 double sumtotal=0;
+                boolean exporinc;
+
                 if(querycur.moveToFirst()) {
                     do {
-                        sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                        exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
+
+                        if(exporinc)
+                            sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                        else
+                            sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+
                     } while (querycur.moveToNext());
                 }
+                totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
+
 
                 adapter.changeCursor(querycur);
                 adapter.notifyDataSetChanged();

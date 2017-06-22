@@ -1,14 +1,24 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kapils.myexpensemanager.Manage_Fragment">
+    tools:context="com.example.kapils.myexpensemanager.Manage_Fragment"
+    android:orientation="vertical">
 
 
-    <ListView
-        android:id="@+id/managelistview"
+    <com.example.kapils.myexpensemanager.SlidingTabLayout
+        android:id="@+id/managetabs"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3f3f3f"
+        />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/managepager"
+
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-</RelativeLayout>
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        ></android.support.v4.view.ViewPager>
+
+</LinearLayout>

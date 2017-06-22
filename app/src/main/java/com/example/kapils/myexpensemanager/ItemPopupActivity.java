@@ -156,7 +156,7 @@ public class ItemPopupActivity extends AppCompatActivity {
                     float famt = Float.parseFloat(mamount);
 
 
-                    boolean check = dbHandler.updateExpense(itemid,mtitle,mdesc, "Expense", famt,mcat,mdate);
+                    boolean check = dbHandler.updateExpense(itemid,mtitle,mdesc,famt,mcat,mdate);
 
                     //check if data added ??
                     if(check){

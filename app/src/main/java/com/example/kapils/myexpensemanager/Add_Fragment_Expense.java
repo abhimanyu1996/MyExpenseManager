@@ -36,11 +36,9 @@ public class Add_Fragment_Expense extends Fragment {
     Button add;
     Spinner addcatspinner;
     MyDBHandler dbHandler;
-    static Button expdatebtn;
+    Button expdatebtn;
 
-    private static int year;
-    private static int month;
-    private static int day;
+    Calendar c;
     private static SimpleDateFormat sdformat = new SimpleDateFormat("dd-MM-yyyy");
 
     @Override
@@ -56,11 +54,8 @@ public class Add_Fragment_Expense extends Fragment {
         expdatebtn = (Button) view.findViewById(R.id.expchgdate);
 
         //initiate date variables
-        final Calendar c = Calendar.getInstance();
+        c = Calendar.getInstance();
         Date date=c.getTime();
-        year = c.get(Calendar.YEAR);
-        month = c.get(Calendar.MONTH);
-        day = c.get(Calendar.DAY_OF_MONTH);
 
         //set initial now value of date
         expdatebtn.setText(sdformat.format(date));
@@ -69,7 +64,7 @@ public class Add_Fragment_Expense extends Fragment {
         expdatebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment newFragment = new SelectDateFragment();
+                DialogFragment newFragment = new SelectDateFragment(c,expdatebtn);
                 newFragment.show(getFragmentManager(), "DatePicker");
             }
         });
@@ -123,7 +118,7 @@ public class Add_Fragment_Expense extends Fragment {
                         float famt = Float.parseFloat(mamount);
 
 
-                        boolean check = dbHandler.addExpense(mtitle,mdesc, "Expense", famt,mcat,mdate);
+                        boolean check = dbHandler.addExpense(mtitle,mdesc,"Expense",famt,mcat,mdate);
 
                         //check if data added ??
                         if(check){
@@ -144,10 +139,18 @@ public class Add_Fragment_Expense extends Fragment {
     //date fragment class..!!
     public static class SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
 
+        Calendar cal;
+        Button btn;
+
+        public SelectDateFragment(Calendar c, Button b) {
+            cal=c;
+            btn=b;
+        }
+
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            DatePickerDialog datePickerDialog =  new DatePickerDialog(getActivity(),this,year,month,day);
+            DatePickerDialog datePickerDialog =  new DatePickerDialog(getActivity(),this,cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH));
             Calendar cal = Calendar.getInstance();
             datePickerDialog.getDatePicker().setMaxDate(cal.getTimeInMillis());
             return datePickerDialog;
@@ -155,14 +158,8 @@ public class Add_Fragment_Expense extends Fragment {
 
         @Override
         public void onDateSet(DatePicker view, int syear, int smonth, int sdayOfMonth) {
-            year = syear;
-            month = smonth;
-            day = sdayOfMonth;
-
-            Calendar cal = Calendar.getInstance();
             cal.set(syear,smonth,sdayOfMonth);
-            Date date=cal.getTime();
-            expdatebtn.setText(sdformat.format(date));
+            btn.setText(sdformat.format(cal.getTime()));
         }
     }
 

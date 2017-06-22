@@ -1,13 +1,61 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.kapils.myexpensemanager.Add_Fragment_Income">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="add income" />
+    <EditText
+        android:id="@+id/inctitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="33dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Title" />
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/incdesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/inctitle"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Description" />
+
+    <EditText
+        android:id="@+id/incamount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/incdesc"
+        android:layout_alignStart="@+id/incdesc"
+        android:layout_below="@+id/incdesc"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:hint="Amount" />
+
+    <Button
+        android:id="@+id/incadd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Income"
+        android:layout_below="@+id/incchgdate"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:id="@+id/incchgdate"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="29dp"
+        android:elevation="0dp"
+        android:text="dd-mm-yyyy"
+        android:layout_below="@+id/incamount"
+        android:layout_alignLeft="@+id/incadd"
+        android:layout_alignStart="@+id/incadd" />
+
+
+</RelativeLayout>

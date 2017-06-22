@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.io.Serializable;
@@ -31,12 +34,15 @@ public class Summary_Custom_Fragment extends Fragment {
     private MyDBHandler dbHandler;
     private Button frombtn, tobtn, searchbtn;
     private TextView totaltv;
+    private RadioGroup typerg;
 
     private Calendar todate, fromdate;
     private static SimpleDateFormat sdformat = new SimpleDateFormat("dd-MM-yyyy");
     private static SimpleDateFormat sdrevformat = new SimpleDateFormat("yyyy-MM-dd");
 
     private SimpleCursorAdapter adapter;
+    private String mtype;
+
 
     public Summary_Custom_Fragment() {
         // Required empty public constructor
@@ -55,6 +61,8 @@ public class Summary_Custom_Fragment extends Fragment {
         tobtn = (Button) view.findViewById(R.id.sumtobtn);
         searchbtn = (Button) view.findViewById(R.id.sumsearchbtn);
         totaltv = (TextView)view.findViewById(R.id.sumcustotal);
+        typerg = (RadioGroup)view.findViewById(R.id.sumtyperadiogroup);
+        mtype = "";
 
         //initalize calender variables
         todate = Calendar.getInstance();
@@ -81,19 +89,59 @@ public class Summary_Custom_Fragment extends Fragment {
             }
         });
 
+        //radiogroup type listener
+        typerg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                if(checkedId == R.id.expenseradiobtn){
+                    mtype = "Expense";
+                }
+                else if(checkedId == R.id.incomeradiobtn){
+                    mtype = "Income";
+                }
+                else{
+                    mtype = "";
+                }
+
+                Cursor querycur = changeAdapterCursor();
+                //loop to get total and set value of total tv
+                double sumtotal=0;
+                if(querycur.moveToFirst()) {
+                    do {
+                        sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                    } while (querycur.moveToNext());
+                }
+                totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
+
+                adapter.changeCursor(querycur);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+
         //get cursor
         Cursor querycur =dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
 
         //loop to get total and set value of total tv
         double sumtotal=0;
-        querycur.moveToFirst();
-        do{
-            sumtotal+=querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-        }while(querycur.moveToNext());
-        totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
+        boolean exporinc;
+        if(querycur.moveToFirst()) {
+            do {
+                exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
+
+                if(exporinc)
+                    sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                else
+                    sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+
+            } while (querycur.moveToNext());
+            totaltv.setText("Total: " + ((double) Math.round(sumtotal * 100) / 100));
+
+        }
 
         //set adapter for list view
-        adapter = new SimpleCursorAdapter(getContext(),
+        adapter = new CustomSimpleCursorAdapter(getContext(),
                 R.layout.listview_item_layout,
                 querycur,
                 new String[]{dbHandler.COLUMN_TITLE, ""+dbHandler.COLUMN_AMOUNT,dbHandler.COLUMN_DATE, dbHandler.COLUMN_CATEGORY},
@@ -106,8 +154,7 @@ public class Summary_Custom_Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //get cursor
-                Cursor querycur =dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
-
+                Cursor querycur = changeAdapterCursor();
                 //loop to get total and set value of total tv
                 double sumtotal=0;
                 if(querycur.moveToFirst()) {
@@ -136,6 +183,15 @@ public class Summary_Custom_Fragment extends Fragment {
         return view;
     }
 
+    private Cursor changeAdapterCursor() {
+        if(mtype!="")
+            return dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"' and "+dbHandler.COLUMN_TYPE+"='"+mtype+"'");
+        else
+            return dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
+
+    }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -156,9 +212,17 @@ public class Summary_Custom_Fragment extends Fragment {
 
                 //loop to get total and set value of total tv
                 double sumtotal=0;
+                boolean exporinc;
+
                 if(querycur.moveToFirst()) {
                     do {
-                        sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                        exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
+
+                        if(exporinc)
+                            sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                        else
+                            sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+
                     } while (querycur.moveToNext());
                 }
                 totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
@@ -210,6 +274,7 @@ public class Summary_Custom_Fragment extends Fragment {
             //reset button value
             btn.setText(sdformat.format(date.getTime()));
         }
+
     }
 
 }

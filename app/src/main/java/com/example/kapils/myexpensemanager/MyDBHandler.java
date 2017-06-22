@@ -112,7 +112,7 @@ public class MyDBHandler extends SQLiteOpenHelper{
         return db.rawQuery(query, null);
     }
 
-    public boolean updateExpense(int searchid,String title, String desc, String type, float amount, String cat, String date){
+    public boolean updateExpense(int searchid,String title, String desc, float amount, String cat, String date){
         boolean b;
 
         try {
@@ -121,7 +121,6 @@ public class MyDBHandler extends SQLiteOpenHelper{
             ContentValues values = new ContentValues();
             values.put(COLUMN_TITLE, title);
             values.put(COLUMN_DESC, desc);
-            values.put(COLUMN_TYPE, type);
             values.put(COLUMN_AMOUNT, amount);
             values.put(COLUMN_CATEGORY, cat);
             values.put(COLUMN_DATE, date);

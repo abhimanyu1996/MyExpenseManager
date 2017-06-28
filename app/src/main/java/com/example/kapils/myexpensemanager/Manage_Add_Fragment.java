@@ -1,12 +1,18 @@
 package com.example.kapils.myexpensemanager;
 
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -22,6 +28,7 @@ public class Manage_Add_Fragment extends Fragment {
     EditText categortet;
     ListView managelistview;
     MyDBHandler dbHandler;
+    SimpleCursorAdapter adapter;
 
     public Manage_Add_Fragment() {
         // Required empty public constructor
@@ -41,13 +48,18 @@ public class Manage_Add_Fragment extends Fragment {
         categorybtn= (Button) view.findViewById(R.id.addcategorybtn);
 
         //set list view adapter
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getContext(),
+        adapter = new SimpleCursorAdapter(getContext(),
                 android.R.layout.simple_list_item_1,
                 dbHandler.getAllCategories(),
                 new String[]{dbHandler.COLUMN_CAT_NAME},
                 new int[]{android.R.id.text1},
                 0);
         managelistview.setAdapter(adapter);
+
+        registerForContextMenu(managelistview);
+        //set long press listener on listview
+
+
 
         //set add button listener
         categorybtn.setOnClickListener(new View.OnClickListener() {
@@ -73,4 +85,38 @@ public class Manage_Add_Fragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        if(v.getId()==R.id.managelistview){
+            menu.add(0,0,0,"Delete");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = menuInfo.position;
+        Cursor c = (Cursor) adapter.getItem(position);
+
+        switch (item.getItemId()){
+            case 0:
+                boolean chk = dbHandler.deleteCategory(c.getString(c.getColumnIndex(dbHandler.COLUMN_CAT_NAME)));
+
+
+                if(chk) {
+                    Toast.makeText(getContext(), "Category Deleted", Toast.LENGTH_LONG).show();
+                    adapter.changeCursor(dbHandler.getAllCategories());
+                    adapter.notifyDataSetChanged();
+                }
+                else
+                    Toast.makeText(getContext(),"There was some problem",Toast.LENGTH_LONG).show();
+
+                break;
+        }
+
+        return true;
+
+    }
 }

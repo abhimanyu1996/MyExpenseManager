@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyDBHandler extends SQLiteOpenHelper{
 
-    private static final int DATABASE_VERSION =1;
+    private static final int DATABASE_VERSION =6;
     private static final String DATABASE_NAME ="transactions.db";
 
     public final String TABLE_TRANSACTION ="transactions";
@@ -166,5 +166,20 @@ public class MyDBHandler extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(COLUMN_CAT_NAME,cat);
         db.insert(TABLE_CATEGORY,null,values);
+    }
+
+    public boolean deleteCategory(String s){
+        boolean check = false;
+
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            db.delete(TABLE_TRANSACTION, COLUMN_CATEGORY+"='" + s+"'", null);
+            db.delete(TABLE_CATEGORY, COLUMN_CAT_NAME + "='" + s+"'", null);
+            check = true;
+        }catch (Exception e){
+            check = false;
+        }
+
+        return check;
     }
 }

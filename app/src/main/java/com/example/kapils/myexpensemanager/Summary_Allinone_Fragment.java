@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class Summary_Allinone_Fragment extends Fragment {
@@ -20,9 +22,10 @@ public class Summary_Allinone_Fragment extends Fragment {
     private ListView sumlv;
     private TextView totaltv;
     private MyDBHandler dbHandler;
+    private RadioGroup typerg;
 
     SimpleCursorAdapter adapter;
-
+    private String mtype;
 
     public Summary_Allinone_Fragment(String sq) {
         if(sq==null){
@@ -42,6 +45,39 @@ public class Summary_Allinone_Fragment extends Fragment {
         //initialize variables
         sumlv = (ListView)view.findViewById(R.id.sumallinonelv);
         totaltv = (TextView)view.findViewById(R.id.sumaiototal);
+        typerg = (RadioGroup)view.findViewById(R.id.aiosumtyperadiogroup);
+        mtype = "";
+
+        //radiogroup type listener
+        typerg.check(R.id.aioallradiobtn);
+        typerg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                if(checkedId == R.id.aioexpenseradiobtn){
+                    mtype = "Expense";
+                }
+                else if(checkedId == R.id.aioincomeradiobtn){
+                    mtype = "Income";
+                }
+                else{
+                    mtype = "";
+                }
+
+                Cursor querycur = changeAdapterCursor();
+                //loop to get total and set value of total tv
+                double sumtotal=0;
+                if(querycur.moveToFirst()) {
+                    do {
+                        sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                    } while (querycur.moveToNext());
+                }
+                totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
+
+                adapter.changeCursor(querycur);
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         //get cursor
         Cursor querycur = dbHandler.getQueryExpense(query);
@@ -62,7 +98,6 @@ public class Summary_Allinone_Fragment extends Fragment {
             } while (querycur.moveToNext());
         }
         totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
-
 
         //initialize cursor adapter
         adapter= new CustomSimpleCursorAdapter(getContext(),
@@ -129,5 +164,15 @@ public class Summary_Allinone_Fragment extends Fragment {
             }
         }
     }
+
+
+    private Cursor changeAdapterCursor() {
+        if(mtype!="")
+            return dbHandler.getQueryExpense(query+" and "+dbHandler.COLUMN_TYPE+"='"+mtype+"'");
+        else
+            return dbHandler.getQueryExpense(query);
+
+    }
+
 
 }

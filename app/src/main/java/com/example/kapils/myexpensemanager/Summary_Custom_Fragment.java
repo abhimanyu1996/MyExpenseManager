@@ -1,8 +1,10 @@
 package com.example.kapils.myexpensemanager;
 
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -32,7 +34,7 @@ public class Summary_Custom_Fragment extends Fragment {
 
     private ListView sumlv;
     private MyDBHandler dbHandler;
-    private Button frombtn, tobtn, searchbtn;
+    private Button frombtn, tobtn;
     private TextView totaltv;
     private RadioGroup typerg;
 
@@ -59,7 +61,7 @@ public class Summary_Custom_Fragment extends Fragment {
         dbHandler = new MyDBHandler(getContext(),null,null,1);
         frombtn = (Button) view.findViewById(R.id.sumfrombutton);
         tobtn = (Button) view.findViewById(R.id.sumtobtn);
-        searchbtn = (Button) view.findViewById(R.id.sumsearchbtn);
+        //searchbtn = (Button) view.findViewById(R.id.sumsearchbtn);
         totaltv = (TextView)view.findViewById(R.id.sumcustotal);
         typerg = (RadioGroup)view.findViewById(R.id.sumtyperadiogroup);
         mtype = "";
@@ -78,6 +80,7 @@ public class Summary_Custom_Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DialogFragment newFragment = new SelectDateFragment(fromdate,frombtn,null,todate);
+                newFragment.setTargetFragment(Summary_Custom_Fragment.this,4);
                 newFragment.show(getFragmentManager(), "DatePicker");
             }
         });
@@ -85,11 +88,13 @@ public class Summary_Custom_Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DialogFragment newFragment = new SelectDateFragment(todate,tobtn,fromdate,null);
+                newFragment.setTargetFragment(Summary_Custom_Fragment.this,4);
                 newFragment.show(getFragmentManager(), "DatePicker");
             }
         });
 
         //radiogroup type listener
+        typerg.check(R.id.allradiobtn);
         typerg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
 
             @Override
@@ -149,7 +154,7 @@ public class Summary_Custom_Fragment extends Fragment {
                 0);
         sumlv.setAdapter(adapter);
 
-        //set search listener
+        /*//set search listener
         searchbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,6 +173,7 @@ public class Summary_Custom_Fragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
+        */
 
         //let item click listener for listview
         sumlv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -231,6 +237,58 @@ public class Summary_Custom_Fragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         }
+        /*//update listview after exit datedialog box
+        else if(requestCode ==4 && resultCode==4){
+            //get cursor
+            Cursor querycur =dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
+
+            //loop to get total and set value of total tv
+            double sumtotal=0;
+            boolean exporinc;
+
+            if(querycur.moveToFirst()) {
+                do {
+                    exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
+
+                    if(exporinc)
+                        sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                    else
+                        sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+
+                } while (querycur.moveToNext());
+            }
+            totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
+
+            adapter.changeCursor(querycur);
+            adapter.notifyDataSetChanged();
+
+        }*/
+    }
+
+    public void updatelistandtotal(){
+        //get cursor
+        Cursor querycur =dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
+
+        //loop to get total and set value of total tv
+        double sumtotal=0;
+        boolean exporinc;
+
+        if(querycur.moveToFirst()) {
+            do {
+                exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
+
+                if(exporinc)
+                    sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                else
+                    sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+
+            } while (querycur.moveToNext());
+        }
+        totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
+
+        adapter.changeCursor(querycur);
+        adapter.notifyDataSetChanged();
+
     }
 
     //date fragment class..!!
@@ -275,6 +333,12 @@ public class Summary_Custom_Fragment extends Fragment {
             btn.setText(sdformat.format(date.getTime()));
         }
 
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            super.onDismiss(dialog);
+            Summary_Custom_Fragment activity = (Summary_Custom_Fragment) getTargetFragment();
+            activity.updatelistandtotal();
+        }
     }
 
 }

@@ -91,7 +91,7 @@ public class Add_Fragment_Income extends Fragment {
                             float famt = Float.parseFloat(mamount);
 
 
-                            boolean check = dbHandler.addExpense(mtitle,mdesc,"Income",famt,"",mdate);
+                            boolean check = dbHandler.addExpense(mtitle,mdesc,"Income",famt,-1,mdate);
 
                             //check if data added ??
                             if(check){

@@ -109,71 +109,23 @@ public class Summary_Custom_Fragment extends Fragment {
                     mtype = "";
                 }
 
-                Cursor querycur = changeAdapterCursor();
-                //loop to get total and set value of total tv
-                double sumtotal=0;
-                if(querycur.moveToFirst()) {
-                    do {
-                        sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-                    } while (querycur.moveToNext());
-                }
-                totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
-
-                adapter.changeCursor(querycur);
-                adapter.notifyDataSetChanged();
+                updatelistandtotal();
             }
         });
 
 
         //get cursor
-        Cursor querycur =dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
-
-        //loop to get total and set value of total tv
-        double sumtotal=0;
-        boolean exporinc;
-        if(querycur.moveToFirst()) {
-            do {
-                exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
-
-                if(exporinc)
-                    sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-                else
-                    sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-
-            } while (querycur.moveToNext());
-            totaltv.setText("Total: " + ((double) Math.round(sumtotal * 100) / 100));
-
-        }
-
+        Cursor querycur =changeAdapterCursor();
         //set adapter for list view
         adapter = new CustomSimpleCursorAdapter(getContext(),
                 R.layout.listview_item_layout,
                 querycur,
-                new String[]{dbHandler.COLUMN_TITLE, ""+dbHandler.COLUMN_AMOUNT,dbHandler.COLUMN_DATE, dbHandler.COLUMN_CATEGORY},
+                new String[]{dbHandler.COLUMN_TITLE, ""+dbHandler.COLUMN_AMOUNT,dbHandler.COLUMN_DATE,dbHandler.COLUMN_CAT_NAME},
                 new int[]{R.id.itemtitle,R.id.itemamount,R.id.itemdate, R.id.itemcategory},
                 0);
         sumlv.setAdapter(adapter);
 
-        /*//set search listener
-        searchbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //get cursor
-                Cursor querycur = changeAdapterCursor();
-                //loop to get total and set value of total tv
-                double sumtotal=0;
-                if(querycur.moveToFirst()) {
-                    do {
-                        sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-                    } while (querycur.moveToNext());
-                }
-                totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
-
-                adapter.changeCursor(querycur);
-                adapter.notifyDataSetChanged();
-            }
-        });
-        */
+        updatelistandtotal();
 
         //let item click listener for listview
         sumlv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -190,7 +142,7 @@ public class Summary_Custom_Fragment extends Fragment {
     }
 
     private Cursor changeAdapterCursor() {
-        if(mtype!="")
+        if(!mtype.equals(""))
             return dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"' and "+dbHandler.COLUMN_TYPE+"='"+mtype+"'");
         else
             return dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
@@ -213,28 +165,7 @@ public class Summary_Custom_Fragment extends Fragment {
             }
 
             if(check) {
-                //get cursor
-                Cursor querycur =dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
-
-                //loop to get total and set value of total tv
-                double sumtotal=0;
-                boolean exporinc;
-
-                if(querycur.moveToFirst()) {
-                    do {
-                        exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
-
-                        if(exporinc)
-                            sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-                        else
-                            sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-
-                    } while (querycur.moveToNext());
-                }
-                totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
-
-                adapter.changeCursor(querycur);
-                adapter.notifyDataSetChanged();
+                updatelistandtotal();
             }
         }
         /*//update listview after exit datedialog box
@@ -267,7 +198,7 @@ public class Summary_Custom_Fragment extends Fragment {
 
     public void updatelistandtotal(){
         //get cursor
-        Cursor querycur =dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
+        Cursor querycur =changeAdapterCursor();
 
         //loop to get total and set value of total tv
         double sumtotal=0;

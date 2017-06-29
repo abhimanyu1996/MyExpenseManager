@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyDBHandler extends SQLiteOpenHelper{
 
-    private static final int DATABASE_VERSION =6;
+    private static final int DATABASE_VERSION =2;
     private static final String DATABASE_NAME ="transactions.db";
 
     public final String TABLE_TRANSACTION ="transactions";
@@ -17,7 +17,7 @@ public class MyDBHandler extends SQLiteOpenHelper{
     public final String COLUMN_TITLE ="title";
     public final String COLUMN_DESC ="description";
     public final String COLUMN_TYPE ="type";
-    public final String COLUMN_CATEGORY ="category";
+    public final String COLUMN_CATEGORY ="category_id";
     public final String COLUMN_AMOUNT ="amount";
     public final String COLUMN_DATE ="tdate";
 
@@ -38,7 +38,7 @@ public class MyDBHandler extends SQLiteOpenHelper{
                 + COLUMN_TITLE + " TEXT , "
                 + COLUMN_DESC + " TEXT, "
                 + COLUMN_TYPE + " TEXT, "
-                + COLUMN_CATEGORY + " TEXT, "
+                + COLUMN_CATEGORY + " INTEGER, "
                 + COLUMN_AMOUNT + " REAL, "
                 + COLUMN_DATE + " DATE"
                 +"); "
@@ -72,7 +72,7 @@ public class MyDBHandler extends SQLiteOpenHelper{
     }
 
 
-    public boolean addExpense(String title, String desc, String type, float amount, String cat, String date){
+    public boolean addExpense(String title, String desc, String type, float amount, int cat, String date){
         boolean b;
 
         try {
@@ -97,7 +97,7 @@ public class MyDBHandler extends SQLiteOpenHelper{
     }
 
     public Cursor getAllExpense(){
-        String query = "SELECT * FROM "+TABLE_TRANSACTION;
+        String query = "SELECT * FROM "+TABLE_TRANSACTION+" LEFT OUTER JOIN "+TABLE_CATEGORY+" ON "+COLUMN_CAT_ID+"="+COLUMN_CATEGORY+" order by (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) desc";
 
         SQLiteDatabase db = getReadableDatabase();
 
@@ -105,14 +105,14 @@ public class MyDBHandler extends SQLiteOpenHelper{
     }
 
     public Cursor getQueryExpense(String s){
-        String query = "SELECT * FROM "+TABLE_TRANSACTION+" "+s+" order by (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) desc";
+        String query = "SELECT * FROM "+TABLE_TRANSACTION+" LEFT OUTER JOIN "+TABLE_CATEGORY+" ON "+COLUMN_CAT_ID+"="+COLUMN_CATEGORY+" "+s+" order by (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) desc";
 
         SQLiteDatabase db = getReadableDatabase();
 
         return db.rawQuery(query, null);
     }
 
-    public boolean updateExpense(int searchid,String title, String desc, float amount, String cat, String date){
+    public boolean updateExpense(int searchid,String title, String desc, float amount, int cat, String date){
         boolean b;
 
         try {
@@ -168,13 +168,13 @@ public class MyDBHandler extends SQLiteOpenHelper{
         db.insert(TABLE_CATEGORY,null,values);
     }
 
-    public boolean deleteCategory(String s){
+    public boolean deleteCategory(int s){
         boolean check = false;
 
         try {
             SQLiteDatabase db = getWritableDatabase();
-            db.delete(TABLE_TRANSACTION, COLUMN_CATEGORY+"='" + s+"'", null);
-            db.delete(TABLE_CATEGORY, COLUMN_CAT_NAME + "='" + s+"'", null);
+            db.delete(TABLE_TRANSACTION, COLUMN_CATEGORY+"=" + s+"", null);
+            db.delete(TABLE_CATEGORY, COLUMN_CAT_ID + "=" + s+"", null);
             check = true;
         }catch (Exception e){
             check = false;

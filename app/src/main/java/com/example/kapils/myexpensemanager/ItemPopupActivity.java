@@ -85,12 +85,12 @@ public class ItemPopupActivity extends AppCompatActivity {
             catspinner.setAdapter(SpinnerAdapter);
 
             //set spinner selected item
-            String itemcategory = c.getString(c.getColumnIndex(dbHandler.COLUMN_CATEGORY));
+            int itemcategory = c.getInt(c.getColumnIndex(dbHandler.COLUMN_CATEGORY));
             int cpos = 0;
             for(int x=0; x<SpinnerAdapter.getCount();x++){
                 spinnercursor.moveToPosition(x);
-                String Temp = spinnercursor.getString(spinnercursor.getColumnIndex(dbHandler.COLUMN_CAT_NAME));
-                if(Temp.contentEquals(itemcategory)){
+                int Temp = spinnercursor.getInt(spinnercursor.getColumnIndex(dbHandler.COLUMN_CAT_NAME));
+                if(Temp==itemcategory){
                     cpos = x;
                     break;
                 }
@@ -137,7 +137,7 @@ public class ItemPopupActivity extends AppCompatActivity {
                 String mtitle = titletv.getText().toString();
                 String mdesc = desctv.getText().toString();
                 String mamount = amounttv.getText().toString();
-                String mcat = ((Cursor)catspinner.getSelectedItem()).getString(1);
+                int mcat = ((Cursor)catspinner.getSelectedItem()).getInt(0);
                 String mdate = datebtn.getText().toString();
 
                 if(mtitle.isEmpty()){
@@ -145,9 +145,6 @@ public class ItemPopupActivity extends AppCompatActivity {
                 }
                 else if(mamount.isEmpty()){
                     Toast.makeText(getApplicationContext(),"Please Enter Amount",Toast.LENGTH_LONG).show();
-                }
-                else if(mcat.isEmpty()){
-                    Toast.makeText(getApplicationContext(),"Please Enter Title",Toast.LENGTH_LONG).show();
                 }
                 else if(mdate.isEmpty()){
                     Toast.makeText(getApplicationContext(),"Please Enter Title",Toast.LENGTH_LONG).show();

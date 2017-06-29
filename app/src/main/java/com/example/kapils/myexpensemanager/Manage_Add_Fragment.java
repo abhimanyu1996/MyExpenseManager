@@ -102,7 +102,7 @@ public class Manage_Add_Fragment extends Fragment {
 
         switch (item.getItemId()){
             case 0:
-                boolean chk = dbHandler.deleteCategory(c.getString(c.getColumnIndex(dbHandler.COLUMN_CAT_NAME)));
+                boolean chk = dbHandler.deleteCategory(c.getInt(0));
 
 
                 if(chk) {

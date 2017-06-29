@@ -99,7 +99,7 @@ public class Add_Fragment_Expense extends Fragment {
                     String mtitle = title.getText().toString();
                     String mdesc = desc.getText().toString();
                     String mamount = amount.getText().toString();
-                    String mcat = ((Cursor)addcatspinner.getSelectedItem()).getString(1);
+                    int mcat = ((Cursor)addcatspinner.getSelectedItem()).getInt(0);
                     String mdate = expdatebtn.getText().toString();
 
                     if(mtitle.isEmpty()){
@@ -107,9 +107,6 @@ public class Add_Fragment_Expense extends Fragment {
                     }
                     else if(mamount.isEmpty()){
                         Toast.makeText(getContext(),"Please Enter Amount",Toast.LENGTH_LONG).show();
-                    }
-                    else if(mcat.isEmpty()){
-                        Toast.makeText(getContext(),"Please Enter Title",Toast.LENGTH_LONG).show();
                     }
                     else if(mdate.isEmpty()){
                         Toast.makeText(getContext(),"Please Enter Title",Toast.LENGTH_LONG).show();

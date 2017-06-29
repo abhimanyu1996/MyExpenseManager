@@ -103,7 +103,7 @@ public class Summary_Allinone_Fragment extends Fragment {
         adapter= new CustomSimpleCursorAdapter(getContext(),
                 R.layout.listview_item_layout,
                 querycur,
-                new String[]{dbHandler.COLUMN_TITLE, ""+dbHandler.COLUMN_AMOUNT,dbHandler.COLUMN_DATE, dbHandler.COLUMN_CATEGORY},
+                new String[]{dbHandler.COLUMN_TITLE, ""+dbHandler.COLUMN_AMOUNT,dbHandler.COLUMN_DATE, dbHandler.COLUMN_CAT_NAME},
                 new int[]{R.id.itemtitle,R.id.itemamount,R.id.itemdate, R.id.itemcategory},
                 0);
         sumlv.setAdapter(adapter);

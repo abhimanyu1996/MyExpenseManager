@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -86,18 +87,14 @@ public class MainActivity extends AppCompatActivity
             fragment = new Add_Fragment();
         } else if (id == R.id.nav_summary) {
             fragment = new Summary_fragment();
-        } else if (id == R.id.nav_recurring) {
-            fragment = new Reccuring_Fragment();
-
         } else if (id == R.id.nav_manage) {
             fragment = new Manage_Fragment();
 
-        } else if (id == R.id.nav_share) {
-            fragment = new Manage_Fragment();
+        } else if (id == R.id.nav_todolisty) {
+            fragment = new Todo_Fragment();
 
-        } else if (id == R.id.nav_send) {
-            fragment = new Manage_Fragment();
-
+        } else if (id == R.id.nav_notes) {
+            fragment = new Notes_Fragment();
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();

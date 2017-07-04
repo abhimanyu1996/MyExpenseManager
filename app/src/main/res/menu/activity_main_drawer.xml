@@ -2,35 +2,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_add"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Add" />
-        <item
-            android:id="@+id/nav_summary"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Summary" />
-        <item
-            android:id="@+id/nav_recurring"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Recurring" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Manage" />
-    </group>
+            <item
+                android:id="@+id/nav_add"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="Add" />
+            <item
+                android:id="@+id/nav_summary"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="Summary" />
 
-    <item android:title="Communicate">
-        <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_manage"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Manage" />
+
+
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+                android:id="@+id/nav_todolisty"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="ToDo List" />
+            <item
+                android:id="@+id/nav_notes"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="Notes" />
+
+
+
+
+    </group>
 
 </menu>

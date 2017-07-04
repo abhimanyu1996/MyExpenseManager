@@ -1,20 +1,20 @@
 package com.example.kapils.myexpensemanager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Summary_Allinone_Fragment extends Fragment {
 
@@ -24,7 +24,7 @@ public class Summary_Allinone_Fragment extends Fragment {
     private MyDBHandler dbHandler;
     private RadioGroup typerg;
 
-    SimpleCursorAdapter adapter;
+    CustomSimpleCursorAdapter adapter;
     private String mtype;
 
     public Summary_Allinone_Fragment(String sq) {
@@ -64,40 +64,12 @@ public class Summary_Allinone_Fragment extends Fragment {
                     mtype = "";
                 }
 
-                Cursor querycur = changeAdapterCursor();
-                //loop to get total and set value of total tv
-                double sumtotal=0;
-                if(querycur.moveToFirst()) {
-                    do {
-                        sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-                    } while (querycur.moveToNext());
-                }
-                totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
-
-                adapter.changeCursor(querycur);
-                adapter.notifyDataSetChanged();
+                updatelistandtotal();
             }
         });
 
         //get cursor
         Cursor querycur = dbHandler.getQueryExpense(query);
-
-        //loop to get total and set value of total tv
-        double sumtotal=0;
-        boolean exporinc;
-
-        if(querycur.moveToFirst()) {
-            do {
-                exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
-
-                if(exporinc)
-                    sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-                else
-                    sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-
-            } while (querycur.moveToNext());
-        }
-        totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
 
         //initialize cursor adapter
         adapter= new CustomSimpleCursorAdapter(getContext(),
@@ -108,6 +80,9 @@ public class Summary_Allinone_Fragment extends Fragment {
                 0);
         sumlv.setAdapter(adapter);
 
+        updatelistandtotal();
+
+        registerForContextMenu(sumlv);
         //set on click
         sumlv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -120,6 +95,49 @@ public class Summary_Allinone_Fragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        if(v.getId()== sumlv.getId()){
+            menu.add(0,0,0,"Edit");
+            menu.add(0,1,1,"Delete");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = menuInfo.position;
+        Cursor c = (Cursor) adapter.getItem(position);
+
+        switch (item.getItemId()){
+            //edit context item
+            case 0:
+                Intent intent = new Intent(getActivity(),ItemPopupActivity.class);
+                intent.putExtra("cursorid",c.getInt(c.getColumnIndex(dbHandler.COLUMN_ID)));
+                startActivityForResult(intent,8);
+
+                break;
+            //delete context item
+            case 1:
+                boolean check = dbHandler.deleteExpense(c.getInt(0));
+                //check if data deleted ??
+                if(check){
+                    Toast.makeText(getContext(),"Data Deleted Successfully",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(getContext(),"Error occured, data not deleted",Toast.LENGTH_LONG).show();
+                }
+
+                updatelistandtotal();
+
+                break;
+        }
+
+        return true;
+
     }
 
     @Override
@@ -139,35 +157,41 @@ public class Summary_Allinone_Fragment extends Fragment {
 
             if(check) {
                 //get cursor
-                Cursor querycur = dbHandler.getQueryExpense(query);
-
-                //loop to get total and set value of total tv
-                double sumtotal=0;
-                boolean exporinc;
-
-                if(querycur.moveToFirst()) {
-                    do {
-                        exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
-
-                        if(exporinc)
-                            sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-                        else
-                            sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
-
-                    } while (querycur.moveToNext());
-                }
-                totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
-
-
-                adapter.changeCursor(querycur);
-                adapter.notifyDataSetChanged();
+                updatelistandtotal();
             }
         }
     }
 
+    public void updatelistandtotal(){
+        //get cursor
+        Cursor querycur =changeAdapterCursor();
+
+        //loop to get total and set value of total tv
+        double sumtotal=0;
+        boolean exporinc;
+
+        if(querycur.moveToFirst()) {
+            do {
+                exporinc = querycur.getString(querycur.getColumnIndex(dbHandler.COLUMN_TYPE)).equals("Expense");
+
+                if(exporinc)
+                    sumtotal -= querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+                else
+                    sumtotal += querycur.getDouble(querycur.getColumnIndex(dbHandler.COLUMN_AMOUNT));
+
+            } while (querycur.moveToNext());
+        }
+        String total = "Total: "+(Math.round(sumtotal*100)/100);
+        totaltv.setText(total);
+
+        adapter.changeCursor(querycur);
+        adapter.notifyDataSetChanged();
+
+    }
+
 
     private Cursor changeAdapterCursor() {
-        if(mtype!="")
+        if(!mtype.equals(""))
             return dbHandler.getQueryExpense(query+" and "+dbHandler.COLUMN_TYPE+"='"+mtype+"'");
         else
             return dbHandler.getQueryExpense(query);

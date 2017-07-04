@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,8 @@ public class Add_Fragment_Expense extends Fragment {
     Spinner addcatspinner;
     MyDBHandler dbHandler;
     Button expdatebtn;
+    ListView addedlv;
+    TextView addedtv;
 
     Calendar c;
     private static SimpleDateFormat sdformat = new SimpleDateFormat("dd-MM-yyyy");
@@ -52,6 +55,9 @@ public class Add_Fragment_Expense extends Fragment {
         amount = (EditText) view.findViewById(R.id.expamount);
         add = (Button) view.findViewById(R.id.expadd);
         expdatebtn = (Button) view.findViewById(R.id.expchgdate);
+        addedlv= (ListView) view.findViewById(R.id.expaddeddatalv);
+        addedtv = (TextView) view.findViewById(R.id.expaddeddatatv);
+
 
         //initiate date variables
         c = Calendar.getInstance();
@@ -95,11 +101,19 @@ public class Add_Fragment_Expense extends Fragment {
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    boolean chck = false;
 
                     String mtitle = title.getText().toString();
                     String mdesc = desc.getText().toString();
                     String mamount = amount.getText().toString();
-                    int mcat = ((Cursor)addcatspinner.getSelectedItem()).getInt(0);
+                    int mcat = 0;
+
+                    try {
+                        mcat = ((Cursor) addcatspinner.getSelectedItem()).getInt(0);
+                    }catch (NullPointerException e){
+                        chck = true;
+                    }
+
                     String mdate = expdatebtn.getText().toString();
 
                     if(mtitle.isEmpty()){
@@ -111,15 +125,34 @@ public class Add_Fragment_Expense extends Fragment {
                     else if(mdate.isEmpty()){
                         Toast.makeText(getContext(),"Please Enter Title",Toast.LENGTH_LONG).show();
                     }
+                    else if (chck){
+                        Toast.makeText(getContext(),"Please Select a category",Toast.LENGTH_LONG).show();
+                    }
                     else{
                         float famt = Float.parseFloat(mamount);
 
 
-                        boolean check = dbHandler.addExpense(mtitle,mdesc,"Expense",famt,mcat,mdate);
+                        Cursor check = dbHandler.addExpense(mtitle,mdesc,"Expense",famt,mcat,mdate);
 
                         //check if data added ??
-                        if(check){
+                        if(check!=null){
                             Toast.makeText(getContext(),"Data Added",Toast.LENGTH_LONG).show();
+                            title.setText("");
+                            desc.setText("");
+                            amount.setText("");
+
+                            //added data show
+                            addedtv.setText("Added Data");
+
+                            CustomSimpleCursorAdapter csca = new CustomSimpleCursorAdapter(getContext(),
+                                    R.layout.listview_item_layout,
+                                    check,
+                                    new String[]{dbHandler.COLUMN_TITLE, ""+dbHandler.COLUMN_AMOUNT,dbHandler.COLUMN_DATE, dbHandler.COLUMN_CAT_NAME},
+                                    new int[]{R.id.itemtitle,R.id.itemamount,R.id.itemdate, R.id.itemcategory},
+                                    0);
+
+                            addedlv.setAdapter(csca);
+
                         }
                         else{
                             Toast.makeText(getContext(),"Error occured data not added",Toast.LENGTH_LONG).show();

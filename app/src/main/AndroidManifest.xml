@@ -22,9 +22,18 @@
         </activity>
 
         <activity android:name=".ItemPopupActivity"
-            android:theme="@style/AppTheme.CustomTheme"
+            android:theme="@style/AppTheme.popupupdatedeletetheme"
             >
         </activity>
+
+        <activity android:name=".PopUpdate"
+            android:theme="@style/AppTheme.popupdatecustomtheme"
+            android:label="Update Your Task Here !">
+        </activity>
+
+        <activity
+            android:name=".DisplayNote"
+            android:label="Your Note..." />
     </application>
 
 </manifest>

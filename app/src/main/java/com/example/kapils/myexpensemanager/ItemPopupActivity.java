@@ -34,7 +34,8 @@ public class ItemPopupActivity extends AppCompatActivity {
 
     private Calendar datecal;
     private static SimpleDateFormat sdformat = new SimpleDateFormat("dd-MM-yyyy");
-
+    private String ctype;
+    private int itemid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class ItemPopupActivity extends AppCompatActivity {
 
         //get cursor data
         Intent i = getIntent();
-        final int itemid = i.getIntExtra("cursorid",0);
+        itemid = i.getIntExtra("cursorid",0);
 
         //get item data from database
         Cursor c = dbHandler.getQueryExpense("where "+dbHandler.COLUMN_ID+"="+itemid);
@@ -67,37 +68,44 @@ public class ItemPopupActivity extends AppCompatActivity {
 
         //set values equal to selecte item
         if(c.moveToFirst()) {
+            ctype = c.getString(c.getColumnIndex("type"));
+
             titletv.setText(c.getString(c.getColumnIndex(dbHandler.COLUMN_TITLE)));
             desctv.setText(c.getString(c.getColumnIndex(dbHandler.COLUMN_DESC)));
             amounttv.setText(c.getString(c.getColumnIndex(dbHandler.COLUMN_AMOUNT)));
 
-            //set spinner adapter
-            Cursor spinnercursor = dbHandler.getAllCategories();
-            SimpleCursorAdapter SpinnerAdapter = new SimpleCursorAdapter(
-                    getApplicationContext(),
-                    android.R.layout.simple_spinner_item,
-                    spinnercursor,
-                    new String[]{dbHandler.COLUMN_CAT_NAME},
-                    new int[]{android.R.id.text1},
-                    0
-            );
-            SpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            catspinner.setAdapter(SpinnerAdapter);
+            if(ctype.equals("Expense")) {
+                //set spinner adapter
+                Cursor spinnercursor = dbHandler.getAllCategories();
+                SimpleCursorAdapter SpinnerAdapter = new SimpleCursorAdapter(
+                        getApplicationContext(),
+                        android.R.layout.simple_spinner_item,
+                        spinnercursor,
+                        new String[]{dbHandler.COLUMN_CAT_NAME},
+                        new int[]{android.R.id.text1},
+                        0
+                );
+                SpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                catspinner.setAdapter(SpinnerAdapter);
 
-            //set spinner selected item
-            int itemcategory = c.getInt(c.getColumnIndex(dbHandler.COLUMN_CATEGORY));
-            int cpos = 0;
-            for(int x=0; x<SpinnerAdapter.getCount();x++){
-                spinnercursor.moveToPosition(x);
-                int Temp = spinnercursor.getInt(spinnercursor.getColumnIndex(dbHandler.COLUMN_CAT_NAME));
-                if(Temp==itemcategory){
-                    cpos = x;
-                    break;
+                //set spinner selected item
+                int itemcategory = c.getInt(c.getColumnIndex(dbHandler.COLUMN_CATEGORY));
+
+                int cpos = 0;
+                for (int x = 0; x < SpinnerAdapter.getCount(); x++) {
+                    spinnercursor.moveToPosition(x);
+                    int Temp = spinnercursor.getInt(spinnercursor.getColumnIndex(dbHandler.COLUMN_CAT_NAME));
+                    if (Temp == itemcategory) {
+                        cpos = x;
+                        break;
+                    }
                 }
+                catspinner.setSelection(cpos);
             }
-            catspinner.setSelection(cpos);
-
-
+            else{
+                catspinner.setVisibility(View.GONE);
+                findViewById(R.id.popcategorytv).setVisibility(View.GONE);
+            }
         }
 
         //set date initial value
@@ -137,8 +145,11 @@ public class ItemPopupActivity extends AppCompatActivity {
                 String mtitle = titletv.getText().toString();
                 String mdesc = desctv.getText().toString();
                 String mamount = amounttv.getText().toString();
-                int mcat = ((Cursor)catspinner.getSelectedItem()).getInt(0);
+                int mcat = -1;
+                if(ctype.equals("Expense"))
+                    mcat = ((Cursor)catspinner.getSelectedItem()).getInt(0);
                 String mdate = datebtn.getText().toString();
+
 
                 if(mtitle.isEmpty()){
                     Toast.makeText(getApplicationContext(),"Please Enter Title",Toast.LENGTH_LONG).show();

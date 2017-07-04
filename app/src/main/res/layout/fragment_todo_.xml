@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kapils.myexpensemanager.Todo_Fragment">
+
+
+    <EditText
+        android:id="@+id/et_task"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="I wanna do..."
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="25dp"
+        android:layout_alignParentLeft="true" />
+
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ac0088"
+        android:textColor="#ffffff"
+        android:layout_alignTop="@+id/et_task"
+        android:text="Add to list"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="19dp" />
+
+    <ListView
+        android:id="@+id/lv_tasks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_add"
+        android:layout_marginTop="25dp"
+        android:clickable="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" />
+
+</RelativeLayout>

@@ -59,8 +59,6 @@ public class Manage_Add_Fragment extends Fragment {
         registerForContextMenu(managelistview);
         //set long press listener on listview
 
-
-
         //set add button listener
         categorybtn.setOnClickListener(new View.OnClickListener() {
             @Override

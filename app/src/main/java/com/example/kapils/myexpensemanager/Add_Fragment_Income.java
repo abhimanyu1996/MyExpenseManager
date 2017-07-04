@@ -16,7 +16,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -30,6 +32,8 @@ public class Add_Fragment_Income extends Fragment {
     Button add;
     MyDBHandler dbHandler;
     Button datebtn;
+    ListView addedlv;
+    TextView addedtv;
 
     Calendar c;
     private static SimpleDateFormat sdformat = new SimpleDateFormat("dd-MM-yyyy");
@@ -37,7 +41,7 @@ public class Add_Fragment_Income extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_add_income, container, false);
+        final View view = inflater.inflate(R.layout.fragment_add_income, container, false);
 
         //initiate all
         title = (EditText) view.findViewById(R.id.inctitle);
@@ -45,6 +49,8 @@ public class Add_Fragment_Income extends Fragment {
         amount = (EditText) view.findViewById(R.id.incamount);
         add = (Button) view.findViewById(R.id.incadd);
         datebtn = (Button) view.findViewById(R.id.incchgdate);
+        addedlv= (ListView) view.findViewById(R.id.incaddeddatalv);
+        addedtv = (TextView) view.findViewById(R.id.incaddeddatatv);
 
         //initiate date variables
         c = Calendar.getInstance();
@@ -91,11 +97,27 @@ public class Add_Fragment_Income extends Fragment {
                             float famt = Float.parseFloat(mamount);
 
 
-                            boolean check = dbHandler.addExpense(mtitle,mdesc,"Income",famt,-1,mdate);
+                            Cursor check = dbHandler.addExpense(mtitle,mdesc,"Income",famt,-1,mdate);
 
                             //check if data added ??
-                            if(check){
+                            if(check!=null){
                                 Toast.makeText(getContext(),"Data Added",Toast.LENGTH_LONG).show();
+                                title.setText("");
+                                desc.setText("");
+                                amount.setText("");
+
+
+                                //added data show
+                                addedtv.setText("Added Data");
+
+                                CustomSimpleCursorAdapter csca = new CustomSimpleCursorAdapter(getContext(),
+                                        R.layout.listview_item_layout,
+                                        check,
+                                        new String[]{dbHandler.COLUMN_TITLE, ""+dbHandler.COLUMN_AMOUNT,dbHandler.COLUMN_DATE, dbHandler.COLUMN_CAT_NAME},
+                                        new int[]{R.id.itemtitle,R.id.itemamount,R.id.itemdate, R.id.itemcategory},
+                                        0);
+
+                                addedlv.setAdapter(csca);
                             }
                             else{
                                 Toast.makeText(getContext(),"Error occured data not added",Toast.LENGTH_LONG).show();

@@ -2,23 +2,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.kapils.myexpensemanager.Manage_Fragment"
     android:orientation="vertical">
 
 
-    <com.example.kapils.myexpensemanager.SlidingTabLayout
-        android:id="@+id/managetabs"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#3f3f3f"
-        />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/managetabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"
+            app:tabGravity="fill"/>
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/managepager"
-
-        android:layout_height="match_parent"
+        android:id="@+id/manageviewpager"
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        ></android.support.v4.view.ViewPager>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
 
 </LinearLayout>

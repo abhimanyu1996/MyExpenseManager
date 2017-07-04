@@ -2,29 +2,28 @@ package com.example.kapils.myexpensemanager;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -138,6 +137,7 @@ public class Manage_Search_Category extends Fragment {
         sumlv.setAdapter(adapter);
 
         updatelistandtotal();
+        registerForContextMenu(sumlv);
 
         //let item click listener for listview
         sumlv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -163,6 +163,50 @@ public class Manage_Search_Category extends Fragment {
     }
 
 
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        if(v.getId()== sumlv.getId()){
+            menu.add(0,0,0,"Edit");
+            menu.add(0,1,1,"Delete");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = menuInfo.position;
+        Cursor c = (Cursor) adapter.getItem(position);
+
+        switch (item.getItemId()){
+            //edit context item
+            case 0:
+                Intent intent = new Intent(getActivity(),ItemPopupActivity.class);
+                intent.putExtra("cursorid",c.getInt(c.getColumnIndex(dbHandler.COLUMN_ID)));
+                startActivityForResult(intent,8);
+
+                break;
+            //delete context item
+            case 1:
+                boolean check = dbHandler.deleteExpense(c.getInt(0));
+                //check if data deleted ??
+                if(check){
+                    Toast.makeText(getContext(),"Data Deleted Successfully",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(getContext(),"Error occured, data not deleted",Toast.LENGTH_LONG).show();
+                }
+
+                updatelistandtotal();
+
+                break;
+        }
+
+        return true;
+
+    }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -181,7 +225,6 @@ public class Manage_Search_Category extends Fragment {
                 updatelistandtotal();
             }
         }
-
     }
 
     public void updatelistandtotal(){
@@ -203,7 +246,8 @@ public class Manage_Search_Category extends Fragment {
 
             } while (querycur.moveToNext());
         }
-        totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
+        String total = "Total: "+((double)Math.round(sumtotal*100)/100);
+        totaltv.setText(total);
 
         adapter.changeCursor(querycur);
         adapter.notifyDataSetChanged();

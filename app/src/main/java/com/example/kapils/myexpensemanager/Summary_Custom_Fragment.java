@@ -1,34 +1,30 @@
 package com.example.kapils.myexpensemanager;
 
-
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import java.io.Serializable;
+import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Summary_Custom_Fragment extends Fragment {
 
@@ -61,7 +57,6 @@ public class Summary_Custom_Fragment extends Fragment {
         dbHandler = new MyDBHandler(getContext(),null,null,1);
         frombtn = (Button) view.findViewById(R.id.sumfrombutton);
         tobtn = (Button) view.findViewById(R.id.sumtobtn);
-        //searchbtn = (Button) view.findViewById(R.id.sumsearchbtn);
         totaltv = (TextView)view.findViewById(R.id.sumcustotal);
         typerg = (RadioGroup)view.findViewById(R.id.sumtyperadiogroup);
         mtype = "";
@@ -127,6 +122,8 @@ public class Summary_Custom_Fragment extends Fragment {
 
         updatelistandtotal();
 
+        registerForContextMenu(sumlv);
+
         //let item click listener for listview
         sumlv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -146,6 +143,50 @@ public class Summary_Custom_Fragment extends Fragment {
             return dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"' and "+dbHandler.COLUMN_TYPE+"='"+mtype+"'");
         else
             return dbHandler.getQueryExpense("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdrevformat.format(fromdate.getTime())+"' and '"+sdrevformat.format(todate.getTime())+"'");
+
+    }
+
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        if(v.getId()== sumlv.getId()){
+            menu.add(0,0,0,"Edit");
+            menu.add(0,1,1,"Delete");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = menuInfo.position;
+        Cursor c = (Cursor) adapter.getItem(position);
+
+        switch (item.getItemId()){
+            //edit context item
+            case 0:
+                Intent intent = new Intent(getActivity(),ItemPopupActivity.class);
+                intent.putExtra("cursorid",c.getInt(c.getColumnIndex(dbHandler.COLUMN_ID)));
+                startActivityForResult(intent,8);
+
+                break;
+            //delete context item
+            case 1:
+                boolean check = dbHandler.deleteExpense(c.getInt(0));
+                //check if data deleted ??
+                if(check){
+                    Toast.makeText(getContext(),"Data Deleted Successfully",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(getContext(),"Error occured, data not deleted",Toast.LENGTH_LONG).show();
+                }
+
+                updatelistandtotal();
+
+                break;
+        }
+
+        return true;
 
     }
 
@@ -215,7 +256,9 @@ public class Summary_Custom_Fragment extends Fragment {
 
             } while (querycur.moveToNext());
         }
-        totaltv.setText("Total: "+((double)Math.round(sumtotal*100)/100));
+        String total = "Total: "+(Math.round(sumtotal*100)/100);
+
+        totaltv.setText(total);
 
         adapter.changeCursor(querycur);
         adapter.notifyDataSetChanged();

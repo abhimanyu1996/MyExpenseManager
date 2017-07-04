@@ -37,4 +37,9 @@ public class CustomSimpleCursorAdapter extends SimpleCursorAdapter {
         cur = cursor;
         super.changeCursor(cursor);
     }
+
+    @Override
+    public Object getItem(int position) {
+        return super.getItem(position);
+    }
 }

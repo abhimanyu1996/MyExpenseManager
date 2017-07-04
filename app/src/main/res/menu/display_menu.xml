@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/Save"
+        android:icon="@drawable/ic_save_note"
+        android:orderInCategory="100"
+        android:title="SAVE"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/Share"
+        android:icon="@drawable/ic_share"
+        android:orderInCategory="100"
+        android:title="share"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/Delete"
+        android:icon="@drawable/ic_delete_note"
+        android:orderInCategory="100"
+        android:title="delete"
+        app:showAsAction="always" />
+</menu>

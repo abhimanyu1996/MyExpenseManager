@@ -2,6 +2,7 @@ package com.example.kapils.myexpensemanager;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -10,14 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 
 public class Summary_fragment extends Fragment {
 
-    ViewPager pager;
-    SummaryViewPagerAdapter adapter;
-    SlidingTabLayout tabs;
-    CharSequence Titles[]={"Today","Week","Month","Custom"};
-    int Numboftabs =4;
+
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
+    private static SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd");
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,29 +31,37 @@ public class Summary_fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_summary, container, false);
 
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new SummaryViewPagerAdapter(getChildFragmentManager(),Titles,Numboftabs);
+        viewPager = (ViewPager) view.findViewById(R.id.summaryviewpager);
+        setupViewPager(viewPager);
 
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) view.findViewById(R.id.summarypager);
-        pager.setAdapter(adapter);
-
-        // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) view.findViewById(R.id.summarytabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
-            }
-        });
-
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
+        tabLayout = (TabLayout) view.findViewById(R.id.summarytabs);
+        tabLayout.setupWithViewPager(viewPager);
 
         return view;
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+
+        Calendar c = Calendar.getInstance();
+        Date datenow=c.getTime();
+
+        adapter.addFragment(new Summary_Allinone_Fragment("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2))='"+sdformat.format(datenow)+"'"), "Today");
+
+        //week fragment
+        c.add(Calendar.DATE, -7);
+        Date dnew = c.getTime();
+        adapter.addFragment(new Summary_Allinone_Fragment("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdformat.format(dnew)+"' and '"+sdformat.format(datenow)+"'"), "Week");
+
+        //month
+        c.add(Calendar.DATE, -30);
+        dnew = c.getTime();
+        adapter.addFragment(new Summary_Allinone_Fragment("where (substr(tdate,7,4)||'-'||substr(tdate,4,2)||'-'||substr(tdate,1,2)) between '"+sdformat.format(dnew)+"' and '"+sdformat.format(datenow)+"'"), "Month");
+
+        //custom fragment
+        adapter.addFragment(new Summary_Custom_Fragment(), "Custom");
+
+        viewPager.setAdapter(adapter);
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -16,43 +17,28 @@ import android.widget.TextView;
 
 public class Manage_Fragment extends Fragment {
 
-    ViewPager pager;
-    ManageViewPagerAdapter adapter;
-    SlidingTabLayout tabs;
-    CharSequence Titles[]={"Add Category","Search By Category"};
-    int Numboftabs =2;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_manage, container, false);
 
+        viewPager = (ViewPager) view.findViewById(R.id.manageviewpager);
+        setupViewPager(viewPager);
 
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ManageViewPagerAdapter(getChildFragmentManager(),Titles,Numboftabs);
-
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) view.findViewById(R.id.managepager);
-        pager.setAdapter(adapter);
-
-        // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) view.findViewById(R.id.managetabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
-            }
-        });
-
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
-
-
+        tabLayout = (TabLayout) view.findViewById(R.id.managetabs);
+        tabLayout.setupWithViewPager(viewPager);
 
         return view;
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        adapter.addFragment(new Manage_Add_Fragment(), "Add Category");
+        adapter.addFragment(new Manage_Search_Category(), "Search by Category");
+        viewPager.setAdapter(adapter);
     }
 
     @Override

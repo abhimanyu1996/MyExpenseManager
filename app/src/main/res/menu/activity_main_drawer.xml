@@ -2,20 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-            <item
-                android:id="@+id/nav_add"
-                android:icon="@drawable/ic_menu_camera"
-                android:title="Add" />
-            <item
-                android:id="@+id/nav_summary"
-                android:icon="@drawable/ic_menu_gallery"
-                android:title="Summary" />
+                    <item
+                        android:id="@+id/nav_add"
+                        android:icon="@drawable/ic_menu_camera"
+                        android:title="Add" />
+                    <item
+                        android:id="@+id/nav_summary"
+                        android:icon="@drawable/ic_menu_gallery"
+                        android:title="Summary" />
 
-            <item
-                android:id="@+id/nav_manage"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="Manage" />
-
+                    <item
+                        android:id="@+id/nav_manage"
+                        android:icon="@drawable/ic_menu_manage"
+                        android:title="Manage" />
 
             <item
                 android:id="@+id/nav_todolisty"

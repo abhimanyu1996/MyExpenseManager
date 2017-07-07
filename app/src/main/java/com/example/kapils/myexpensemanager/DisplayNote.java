@@ -32,6 +32,8 @@ public class DisplayNote extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_notepad);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         note = (EditText)findViewById(R.id.et_note);
         title = (AutoCompleteTextView)findViewById(R.id.et_title);
         relativeLayout = (RelativeLayout)findViewById(R.id.relativelayout);
@@ -70,6 +72,28 @@ public class DisplayNote extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         final Intent i = new Intent();
         switch (item.getItemId()){
+            case android.R.id.home:
+                if(title.getText().toString().equals("")) {
+                    Snackbar snackbar = Snackbar.make(relativeLayout, "Please provide a title to your note", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
+                else {
+                    Intent it = new Intent();
+                    it.putExtra("IsDELETED", "n");
+                    it.putExtra("NOTE", note.getText().toString());
+                    it.putExtra("TITLE", title.getText().toString());
+                    if (requestcode == 1) {
+                        setResult(requestcode, it);
+                    } else {
+                        it.putExtra("POSITION", position);
+                        setResult(requestcode, it);
+                    }
+                    //setResult(1,i);
+                    //Toast.makeText(DisplayNote.this, "Save", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                return true;
+
             case R.id.Delete:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(DisplayNote.this);
 

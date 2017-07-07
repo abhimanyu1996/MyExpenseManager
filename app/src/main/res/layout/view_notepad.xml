@@ -25,6 +25,8 @@
         android:layout_marginTop="39dp"
         android:ems="20"
         android:inputType="textMultiLine"
+        android:gravity="start"
         android:background="@null"
-        android:hint="Write your note here..."/>
+        android:hint="Write your note here..."
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

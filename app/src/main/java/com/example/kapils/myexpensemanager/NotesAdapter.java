@@ -27,6 +27,17 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
     private String bg_colors[] = {"#D7BDE2" , "#AED6F1" , "#A9CCE3" , "#A3E4D7" , "#F9E79F" , "#FAD7A0" , "#F5B7B1"};
     private String title_colors[]={"#9B59B6" , "#5DADE2" , "#5499C7" , "#48C9B0" , "#F4D03F" , "#F5B041" , "#EC7063"};
 
+
+
+
+
+
+    public NotesAdapter(Context mContext, List<MyNote> notesList)
+    {
+        this.mContext = mContext;
+        this.notesList = notesList;
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder  //implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener
     {
 
@@ -39,19 +50,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
             note = (TextView)itemView.findViewById(R.id.tv_note);
             dt = (TextView)itemView.findViewById(R.id.tv_dt);
             //overflow = (ImageView)itemView.findViewById(R.id.overflow);
-            //itemView.setOnCreateContextMenuListener(this);
+            itemView.setOnCreateContextMenuListener((View.OnCreateContextMenuListener) mContext);
+
         }
 
 
-    }
-
-
-
-
-    public NotesAdapter(Context mContext, List<MyNote> notesList)
-    {
-        this.mContext = mContext;
-        this.notesList = notesList;
     }
 
     @Override
@@ -71,12 +74,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
         holder.dt.setText(note.getDt());
         holder.title.setTextColor(Color.parseColor(title_colors[position%(title_colors.length)]));
 
-        /*holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                return ;
+                setPosition(holder.getAdapterPosition());
+                return false;
             }
-        });*/
+        });
 
         /*holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +89,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
             }
         });*/
 
+    }
+
+    public void setPosition(int position){
+        this.pos=position;
     }
 
     public int getPosition(){
@@ -131,4 +139,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
         return notesList.size();
     }
 
+    @Override
+    public void onViewRecycled(MyViewHolder holder) {
+        holder.itemView.setOnClickListener(null);
+        super.onViewRecycled(holder);
+    }
 }

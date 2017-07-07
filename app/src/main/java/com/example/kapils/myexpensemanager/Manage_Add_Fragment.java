@@ -89,32 +89,65 @@ public class Manage_Add_Fragment extends Fragment {
 
         if(v.getId()==R.id.managelistview){
             menu.add(0,0,0,"Delete");
+
+            //context menu listener for tihis fragment
+            MenuItem.OnMenuItemClickListener listener = new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                    int position = menuInfo.position;
+                    Cursor c = (Cursor) adapter.getItem(position);
+
+                    if(item.getGroupId()==0) {
+                        switch (item.getItemId()) {
+                            case 0:
+                                boolean chk = dbHandler.deleteCategory(c.getInt(0));
+
+
+                                if (chk) {
+                                    Toast.makeText(getContext(), "Category Deleted", Toast.LENGTH_LONG).show();
+                                    adapter.changeCursor(dbHandler.getAllCategories());
+                                    adapter.notifyDataSetChanged();
+                                } else
+                                    Toast.makeText(getContext(), "There was some problem", Toast.LENGTH_LONG).show();
+
+                                break;
+                        }
+                    }
+                    return true;
+                }
+            };
+
+            for(int i=0;i<menu.size();i++){
+                menu.getItem(i).setOnMenuItemClickListener(listener);
+            }
         }
     }
 
+    /*
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = menuInfo.position;
         Cursor c = (Cursor) adapter.getItem(position);
 
-        switch (item.getItemId()){
-            case 0:
-                boolean chk = dbHandler.deleteCategory(c.getInt(0));
+        if(item.getGroupId()==0) {
+            switch (item.getItemId()) {
+                case 0:
+                    boolean chk = dbHandler.deleteCategory(c.getInt(0));
 
 
-                if(chk) {
-                    Toast.makeText(getContext(), "Category Deleted", Toast.LENGTH_LONG).show();
-                    adapter.changeCursor(dbHandler.getAllCategories());
-                    adapter.notifyDataSetChanged();
-                }
-                else
-                    Toast.makeText(getContext(),"There was some problem",Toast.LENGTH_LONG).show();
+                    if (chk) {
+                        Toast.makeText(getContext(), "Category Deleted", Toast.LENGTH_LONG).show();
+                        adapter.changeCursor(dbHandler.getAllCategories());
+                        adapter.notifyDataSetChanged();
+                    } else
+                        Toast.makeText(getContext(), "There was some problem", Toast.LENGTH_LONG).show();
 
-                break;
+                    break;
+            }
         }
-
         return true;
 
-    }
+    }*/
 }

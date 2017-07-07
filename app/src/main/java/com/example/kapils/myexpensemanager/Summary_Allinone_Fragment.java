@@ -103,8 +103,52 @@ public class Summary_Allinone_Fragment extends Fragment {
         if(v.getId()== sumlv.getId()){
             menu.add(0,0,0,"Edit");
             menu.add(0,1,1,"Delete");
+
+
+            //context menu listener for tihis fragment
+            MenuItem.OnMenuItemClickListener listener = new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                    int position = menuInfo.position;
+                    Cursor c = (Cursor) adapter.getItem(position);
+
+                    if(item.getGroupId()==0) {
+                        switch (item.getItemId()) {
+                            //edit context item
+                            case 0:
+                                Intent intent = new Intent(getActivity(), ItemPopupActivity.class);
+                                intent.putExtra("cursorid", c.getInt(c.getColumnIndex(dbHandler.COLUMN_ID)));
+                                startActivityForResult(intent, 8);
+
+                                break;
+                            //delete context item
+                            case 1:
+                                boolean check = dbHandler.deleteExpense(c.getInt(0));
+                                //check if data deleted ??
+                                if (check) {
+                                    Toast.makeText(getContext(), "Data Deleted Successfully", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(getContext(), "Error occured, data not deleted", Toast.LENGTH_LONG).show();
+                                }
+
+                                updatelistandtotal();
+
+                                break;
+                        }
+                    }
+                    return true;
+
+                }
+            };
+
+            for(int i=0;i<menu.size();i++){
+                menu.getItem(i).setOnMenuItemClickListener(listener);
+            }
         }
     }
+
+    /*
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -112,33 +156,34 @@ public class Summary_Allinone_Fragment extends Fragment {
         int position = menuInfo.position;
         Cursor c = (Cursor) adapter.getItem(position);
 
-        switch (item.getItemId()){
-            //edit context item
-            case 0:
-                Intent intent = new Intent(getActivity(),ItemPopupActivity.class);
-                intent.putExtra("cursorid",c.getInt(c.getColumnIndex(dbHandler.COLUMN_ID)));
-                startActivityForResult(intent,8);
+        if(item.getGroupId()==0) {
+            switch (item.getItemId()) {
+                //edit context item
+                case 0:
+                    Intent intent = new Intent(getActivity(), ItemPopupActivity.class);
+                    intent.putExtra("cursorid", c.getInt(c.getColumnIndex(dbHandler.COLUMN_ID)));
+                    startActivityForResult(intent, 8);
 
-                break;
-            //delete context item
-            case 1:
-                boolean check = dbHandler.deleteExpense(c.getInt(0));
-                //check if data deleted ??
-                if(check){
-                    Toast.makeText(getContext(),"Data Deleted Successfully",Toast.LENGTH_LONG).show();
-                }
-                else{
-                    Toast.makeText(getContext(),"Error occured, data not deleted",Toast.LENGTH_LONG).show();
-                }
+                    break;
+                //delete context item
+                case 1:
+                    boolean check = dbHandler.deleteExpense(c.getInt(0));
+                    //check if data deleted ??
+                    if (check) {
+                        Toast.makeText(getContext(), "Data Deleted Successfully", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Error occured, data not deleted", Toast.LENGTH_LONG).show();
+                    }
 
-                updatelistandtotal();
+                    updatelistandtotal();
 
-                break;
+                    break;
+            }
         }
-
         return true;
 
     }
+    */
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

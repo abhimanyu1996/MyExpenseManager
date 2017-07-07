@@ -76,7 +76,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <ListView
-        android:id="@+id/managecustomlv"
+        android:id="@+id/managecustomsearchlv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

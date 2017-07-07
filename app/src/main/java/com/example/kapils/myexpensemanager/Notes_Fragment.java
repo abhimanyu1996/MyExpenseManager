@@ -5,8 +5,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -16,9 +18,12 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -41,6 +46,7 @@ public class Notes_Fragment extends Fragment {
     private int flag;
     public int pos;
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -113,46 +119,12 @@ public class Notes_Fragment extends Fragment {
 
             @Override
             public void onLongClick(View view, int position) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(Notes_Fragment.this.getActivity());
-                View mview = getActivity().getLayoutInflater().inflate(R.layout.notes_alert_box, null);
-                Button can = (Button)mview.findViewById(R.id.btn_cancel);
-                Button del = (Button)mview.findViewById(R.id.btn_delete);
-                builder.setView(mview);
-                final AlertDialog dialog = builder.create();
-                can.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Toast.makeText(getContext(), "Cancel", Toast.LENGTH_SHORT).show();
-                        //AlertDialog
-                        dialog.dismiss();
-                    }
-                });
 
-                del.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
-                        int check = dbHandler.deleteNote(notesList.get(getPosition()).getDt());
-                        if(check==0)
-                            Toast.makeText(getActivity(), "Task cannot be deleted !", Toast.LENGTH_SHORT).show();
-                        else{
-                            //Toast.makeText(getActivity(), "Task deleted !", Toast.LENGTH_SHORT).show();
-                            Snackbar snackbar = Snackbar.make(recyclerView, notesList.get(getPosition()).getTitle()+" note deleted !", Snackbar.LENGTH_SHORT);
-                            snackbar.show();
-
-                        }
-                        notesList.remove(getPosition());
-                        adapter.notifyDataSetChanged();
-                        dialog.dismiss();
-
-
-                    }
-                });
-
-
-                dialog.show();
             }
         }));
+
+
+        registerForContextMenu(recyclerView);
 
 
         return view;
@@ -205,6 +177,81 @@ public class Notes_Fragment extends Fragment {
                 }
         }
     }
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        if(v.getId()== R.id.recycler_view){
+            menu.add(0,0,0,"Edit");
+            menu.add(0,1,1,"Delete");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = ((NotesAdapter)recyclerView.getAdapter()).getPosition();
+        switch (item.getItemId()){
+            //edit context item
+            case 0:
+                MyNote note = notesList.get(position);
+                Intent i = new Intent(Notes_Fragment.this.getActivity(), DisplayNote.class);
+                i.putExtra("TITLE",note.getTitle());
+                i.putExtra("NOTE", note.getNote());
+                i.putExtra("POSITION",Integer.toString(position));
+                startActivityForResult(i, 2);
+                //Toast.makeText(getActivity(), "Edit clicked"+position, Toast.LENGTH_SHORT).show();
+
+                break;
+            //delete context item
+            case 1:
+                final AlertDialog.Builder builder = new AlertDialog.Builder(Notes_Fragment.this.getActivity());
+                View mview = getActivity().getLayoutInflater().inflate(R.layout.notes_alert_box, null);
+                Button can = (Button)mview.findViewById(R.id.btn_cancel);
+                Button del = (Button)mview.findViewById(R.id.btn_delete);
+                builder.setView(mview);
+                final AlertDialog dialog = builder.create();
+                can.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Toast.makeText(getContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                        //AlertDialog
+                        dialog.dismiss();
+                    }
+                });
+
+                del.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
+                        int check = dbHandler.deleteNote(notesList.get(getPosition()).getDt());
+                        if(check==0)
+                            Toast.makeText(getActivity(), "Task cannot be deleted !", Toast.LENGTH_SHORT).show();
+                        else{
+                            //Toast.makeText(getActivity(), "Task deleted !", Toast.LENGTH_SHORT).show();
+                            Snackbar snackbar = Snackbar.make(recyclerView, notesList.get(getPosition()).getTitle()+" note deleted !", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+
+                        }
+                        notesList.remove(getPosition());
+                        adapter.notifyDataSetChanged();
+                        dialog.dismiss();
+
+
+                    }
+                });
+
+
+                dialog.show();
+                //Toast.makeText(getActivity(), "delete clicked"+position, Toast.LENGTH_SHORT).show();
+
+                break;
+        }
+
+        return true;
+
+    }
+
 
     public int getPosition()
     {
